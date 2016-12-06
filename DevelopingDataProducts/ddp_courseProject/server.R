@@ -12,8 +12,9 @@ library(leaflet)
 library(openxlsx)
 library(dplyr)
 library(lubridate)
+library(ggplot2)
 
-setwd("/home/michal/DevelopingDataProducts/ddp_courseProject")
+#setwd("/home/michal/DevelopingDataProducts/ddp_courseProject")
 
 translSeverity <- function(y) {
   sapply(y, function(x)

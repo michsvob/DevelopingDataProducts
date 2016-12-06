@@ -1,0 +1,73 @@
+Road Safety in the UK
+========================================================
+author: Michal Svoboda
+date: 6.12.2016
+autosize: true
+
+Data
+========================================================
+
+The application uses data about road accidents for the year 2015 from the dataset Road Safety Data provided by Brittish ministerial Department For Transport. For more information see <https://data.gov.uk/dataset/road-accidents-safety-data>.
+
+App
+========================================================
+The application first loads the data stored in a csv file. Then columns featuring gps coordinates of the accidents, their severity, weekday and time are selected. 
+There are two functionalities that can be used:
+
+- map
+- histogram showing distribution of the accidents over the day
+
+Interesting results
+========================================================
+
+```{r, echo=FALSE}
+library(shiny)
+library(leaflet)
+library(openxlsx)
+library(dplyr)
+library(lubridate)
+library(ggplot2)
+
+#setwd("/home/michal/DevelopingDataProducts/ddp_courseProject")
+
+translSeverity <- function(y) {
+  sapply(y, function(x)
+    switch(x, "1" = "Fatal", "2" = "Serious", "3" = "Slight"))
+}
+translWeekday <- function(y) {
+  sapply(y, function(x)
+    switch(
+      x,
+      "1" = "Sunday",
+      "2" = "Monday",
+      "3" = "Tuesday",
+      "4" = "Wednesday",
+      "5" = "Thursday",
+      "6" = "Friday",
+      "7"= "Saturday"
+    ))
+}
+
+ds <- read.csv("RoadSafetyData_2015/Accidents_2015.csv") %>%
+    select(Longitude, Latitude, Time, Accident_Severity, Day_of_Week) %>%
+    transmute(
+      Longitude,
+      Latitude,
+      Time,
+      Severity = translSeverity(Accident_Severity),
+      Weekday = translWeekday(Day_of_Week)
+    )
+ds2 <- filter(ds, Weekday == "Sunday", Severity == "Serious")
+
+ggplot(data.frame(time = as.numeric(ds2$Time) / 60), aes(time)) +
+      geom_histogram(bins = 24) +
+      xlim(c(0, 24)) +
+      ggtitle(paste("Number of","Serious","accidents on","Sunday"))
+
+```
+
+Interpretation
+========================================================
+See that values early in the morning? Could this be drunken drivers returning home?
+
+Go ahead and try to find some more interesting patterns using the application!

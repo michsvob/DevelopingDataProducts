@@ -53,8 +53,6 @@ shinyUI(fluidPage(
         ),
       tabPanel("map", leafletOutput("map")),
       tabPanel("histogram", plotOutput("histogram"))
-      
-      
         ))
 )
 ))
